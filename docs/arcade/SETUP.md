@@ -41,9 +41,10 @@ From the upstream README and paper Appendix C:
 
 | Field | Value | Note |
 |-------|-------|------|
-| Agent harness | Claude Code `2.1.44` | paper Table 7 version for Sonnet 4.6 |
-| Model | `claude-sonnet-4-6` (`configs/models/sonnet-4.6.yaml`) | paper Table 1 row, ~$1.96/checkpoint |
-| Thinking | `high` | paper: high reasoning for all Claude Code runs |
+| Agent harness | Claude Code `2.1.293` | first release with Claude Haiku 5.5 (paper rule: earliest harness that supports the model) |
+| Model | `claude-haiku-5-5` (`configs/models/haiku-5.5.yaml`) | not evaluated in the paper; no published baseline to check against |
+| Thinking | `high` → `CLAUDE_CODE_EFFORT_LEVEL=high` | adaptive thinking, effort level (model default is `medium`) |
+| Pricing | $0.10 / $0.50 per MTok (prompts ≤100K), $0.50 / $2.50 above | billed cost is taken from Claude Code's own report |
 | Temperature | harness default — **not controllable** | Claude Code CLI exposes no temperature flag |
 | Seed | **not controllable** | "seed" in this study = replicate index 1..3 |
 | Environment | `configs/environments/docker-python3.12-uv.yaml` | |

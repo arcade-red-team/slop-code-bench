@@ -46,7 +46,7 @@ files are untouched except the one-line import in `agents/__init__.py`
 | (b) quality prompt | `anti_slop` (paper's quality-guidance prompt) | — |
 | (c) arcade | `just-solve` + arcade addendum | conformance, N=2 |
 
-Same model / harness / thinking / environment / problem set (see `SETUP.md`);
+Same model (Claude Haiku 5.5) / harness / thinking / environment / problem set (see `SETUP.md`);
 3 replicates each. Replicates are not seeded (harness has no seed/temperature).
 
 ## 3. Metrics (per checkpoint)
@@ -72,19 +72,24 @@ Same model / harness / thinking / environment / problem set (see `SETUP.md`);
 - Every number in `RESULTS.md` is produced by `arcade/analyze.py` from the
   committed JSONL; the script regenerates the tables and the erosion plot.
 
-## 5. Cost estimate (paper-derived, Sonnet 4.6 ≈ $1.96/checkpoint, ≈14 min/checkpoint)
+## 5. Cost estimate (Claude Haiku 5.5, effort `high`)
+
+The paper has no Haiku 5.5 data, so this is a band, not a point estimate.
+Anchor: paper's Sonnet 4.6 at $1.96/checkpoint ($3/$15 per MTok). Assuming
+the same token volume, +30% for the newer tokenizer, and Haiku 5.5's rates:
+≈ $0.09/checkpoint if prompts stay ≤100K tokens, ≈ $0.42 if they all exceed
+it (agent contexts often do). Haiku may also take more turns than Sonnet.
 
 | Scope | Checkpoints/run | Per run | 9 runs (3 cfg × 3 rep) |
 |-------|-----------------|---------|------------------------|
-| Pilot subset (8 problems) | 47 | ≈ $92 | ≈ $920–1,000* |
-| Full v2 (36 problems) | 196 | ≈ $384 | ≈ $3,600–4,000* |
+| Pilot subset (8 problems) | 47 | ≈ $4–20 | ≈ $45–230* |
+| Full v2 (36 problems) | 196 | ≈ $17–83 | ≈ $190–950* |
 
 \* (b) ≈ +12% per paper; (c) assumed +20–50% for repair rounds (unknown until
-measured). Wall time ≈ 11 h per subset run sequentially; problems run in
-parallel within the Docker/RAM limits.
+measured). Wall time unknown for Haiku; measured in the smoke run.
 
-Proposed spend gates: (1) 1-problem smoke for (a) and (c) ≈ $20;
-(2) one (a) replicate on the subset ≈ $92 → re-estimate from measured cost;
+Proposed spend gates: (1) 1-problem smoke for (a) and (c), ≈ $1–5;
+(2) one (a) replicate on the subset → replace this band with measured cost;
 (3) full grid only after approval.
 
 ## 6. Known confounds / limitations (to carry into RESULTS.md)
@@ -93,4 +98,7 @@ Proposed spend gates: (1) 1-problem smoke for (a) and (c) ≈ $20;
 - `step_limit: 100` vs paper's no cap / 2 h wall clock.
 - No temperature/seed control; replicate variance is harness-level.
 - Single model; Python track only; 8-problem pilot is underpowered.
+- Claude Haiku 5.5 is not in the paper: baseline (a) cannot be checked against
+  published numbers, only reported as-is. If pass rates are very low, erosion
+  is measured on code that barely works (floor effect).
 - arcade-agent's contract is author-written by the same agent being measured.
